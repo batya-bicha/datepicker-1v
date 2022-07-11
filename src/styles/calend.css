@@ -1,0 +1,87 @@
+.ctrl-datepicker {
+  display: inline-block;
+}
+
+.ctrl-datepicker > ul,
+.ctrl-datepicker > ul > li > ul {
+  list-style: none;
+  display: inline-block;
+}
+
+.ctrl-datepicker > ul > li {
+  position: relative;
+}
+
+.ctrl-datepicker > ul > li > ul {
+  position: absolute;
+  visibility: visible;
+  opacity: 1;
+  min-width: 255px;
+  border: 1px solid;
+  border-radius: 4px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.ctrl-datepicker > ul > li:hover > ul {
+  visibility: visible;
+  opacity: 1;
+  box-shadow: 1px 5px 10px -5px #000;
+  transition: 0.5s ease;
+}
+
+.ctrl-datepicker > ul > li > span {
+  display: block;
+  font-size: 18px;
+  cursor: pointer;
+  border-bottom: 2px solid #000;
+  transition: all 0.5s ease;
+  padding: 6px;
+}
+
+.ctrl-datepicker > ul > li > span:hover {
+  border-bottom: 2px solid #0000ff;
+  transition: all 0.5s ease;
+}
+
+.ctrl-datepicker > ul > li > ul > li {
+  text-align: center;
+}
+
+.ctrl-datepicker > ul > li > ul > li > table {
+  width: 100%;
+}
+
+.ctrl-datepicker > ul > li > ul > li > table > tbody > tr > td {
+  border: 1px solid #000;
+  border-radius: 2px;
+  transition: all 0.5s ease;
+}
+
+.ctrl-datepicker > ul > li > ul > li > span {
+  display: inline-block;
+  width: 48%;
+  text-align: center;
+  cursor: default;
+  border-bottom: 1px solid #aaa;
+  transition: all 0.5s ease;
+}
+
+td.cdate {
+  background-color: yellow;
+}
+
+td.activeDate {
+  background-color: antiquewhite;
+}
+
+td.dateMouseOver {
+  border: #0000ff !important;
+}
+
+span{
+  display: flex !important;
+  width: 100% !important;
+  justify-content: space-between;
+  align-items: center;
+}

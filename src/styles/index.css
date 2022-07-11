@@ -9,7 +9,7 @@ body {
 
 .container {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   flex-wrap: wrap;
   width: 65%;
   height: 80%;
@@ -19,8 +19,10 @@ body {
   padding: 20px;
 }
 
-#datePicker {
+.date-picker {
   position: relative;
+  width: 150px;
+  height: 30px;
 }
 
 .date-picker__input {
