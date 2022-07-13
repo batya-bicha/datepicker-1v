@@ -4,7 +4,7 @@ export class DatePickerConfig {
     this.config = {
       popup: props.popup || 'date-picker__popup',
       format: props.format || 'DD.MM.YYYY',
-      weekDays: props.weekDays || ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      weekDays: props.weekDays || ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: props.months || ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     };
     this.datePicker = props.datePicker;
@@ -57,8 +57,6 @@ export class DatePickerConfig {
     // datePickerGrid + WeekDays
     this.datePickerMain = document.createElement('div');
     this.datePickerWeekdays = document.createElement('div');
-    //todo ?
-    this.weekDay = document.createElement('div');
 
     // datePickerMonthDays
     this.datePickerDays = document.createElement('div');
@@ -73,19 +71,25 @@ export class DatePickerConfig {
 
   handlerToggle() {
     this.popup[0]?.classList.toggle('popup__active');
-  };
+  }
+
+
+  handlerChanged(year, month, day, weekDay) {
+    console.log(year, month, day, weekDay)
+  }
 
 
   render() {
-    new DatePickerInput({}).render(this.datePicker);
+    new DatePickerInput({}, this.handlerChanged).render(this.datePicker);
     new DatePickerPopup({}).render(this.datePicker);
-  };
+  }
 };
 
 
 class DatePickerInput extends DatePickerConfig {
-  constructor(props) {
+  constructor(props, handlerChanged) {
     super(props);
+    this.handlerChanged = handlerChanged;
   }
 
   render(datePicker) {
@@ -100,13 +104,16 @@ class DatePickerInput extends DatePickerConfig {
     this.datePickerImg.append(this.imgPicker);
     this.datePickerInput.append(this.datePickerFormat, this.datePickerImg);
     datePicker.append(this.datePickerInput);
+
+    new DatePickerPopup({}, this.handlerChanged).render(datePicker);
   }
 };
 
 
 class DatePickerPopup extends DatePickerConfig {
-  constructor(props) {
+  constructor(props, handlerChanged) {
     super(props);
+    this.handlerChanged = handlerChanged;
   }
 
   render(datePicker) {
@@ -120,15 +127,16 @@ class DatePickerPopup extends DatePickerConfig {
     this.datePickerPopup.append(this.datePickerHeader, this.datePickerCalendar);
     datePicker.append(this.datePickerPopup);
 
-    new DatePickerFormat({}).render(this.datePickerHeader);
-    new Calendar({}).render(this.datePickerCalendar);
+    new DatePickerFormat({}, this.handlerChanged).render(this.datePickerHeader);
+    new Calendar({}, this.handlerChanged).render(this.datePickerCalendar);
   }
 };
 
 
 class DatePickerFormat extends DatePickerPopup {
-  constructor(props) {
+  constructor(props, handlerChanged) {
     super(props);
+    this.handlerChanged = handlerChanged;
   }
 
 
@@ -159,13 +167,19 @@ class DatePickerFormat extends DatePickerPopup {
 
 
 class Calendar extends DatePickerConfig {
-  constructor(props) {
+  constructor(props, handlerChanged) {
     super(props);
     this.date = new Date();
+    this.handlerChanged = handlerChanged;
   }
 
 
-  render(datePickerCalendar, days) {
+  // handlerCalendarChanged(elem) {
+  //   console.log('Calendar ' + elem)
+  // }
+
+
+  render(datePickerCalendar) {
     // input values
     const currentYear = parseInt(this.spanYear.innerText);
     const currentMonth = parseInt(this.spanMonth.innerText);
@@ -176,7 +190,7 @@ class Calendar extends DatePickerConfig {
     this.datePickerBtns.setAttribute('class', 'date-picker__btns');
     this.datePickerWeekdays.setAttribute('class', 'date-picker__weekdays');
     this.config.weekDays.forEach(el => {
-      this.datePickerWeekdays.innerHTML += `<div>${el}</div>`;
+      this.datePickerWeekdays.innerHTML += `<div>${el[0]}</div>`;
     });
 
     this.btnOk.innerText = 'OK';
@@ -190,15 +204,64 @@ class Calendar extends DatePickerConfig {
     this.btnOk.addEventListener('click', () => console.log('click ok'));
     this.btnCancel.addEventListener('click', () => console.log('click cancel'));
 
-    new DatePickerSwitcher({}).render(this.datePickerSwitcher);
-    new Year({}, this.datePickerMain).render(currentYear, currentMonth, currentDay);
+    new Year({}, this.datePickerMain, this.datePickerSwitcher, this.handlerChanged).render(currentYear, currentMonth, currentDay);
   }
 };
 
 
-class DatePickerSwitcher extends DatePickerPopup {
-  constructor(props) {
+class Year extends DatePickerPopup {
+  constructor(props, datePickerMain, datePickerSwitcher, handlerChanged) {
     super(props);
+    this.date = new Date();
+    this.datePickerMain = datePickerMain;
+    this.datePickerSwitcher = datePickerSwitcher;
+    this.handlerChanged = handlerChanged;
+    this.dateMonthDay = this.date.getDate();
+    this.dateMonth = this.date.getMonth();
+    this.dateYear = this.date.getFullYear();
+    this.currentDate = new Date(this.dateYear, this.dateMonth, this.dateMonthDay);
+  }
+
+
+  // handlerYearChanged(month) {
+  //   console.log('change month ' + month)
+  // }
+
+
+  render(year, month, day) {
+    if (year && month && day) {
+      this.selectedDate = new Date(year, month, day);
+    } else {
+      this.selectedDate = new Date();
+    }
+
+    new CalendarSwitcher({}, this.selectedDate, this.datePickerMain, this.handlerChanged).render(this.datePickerSwitcher);
+  }
+
+};
+
+
+class CalendarSwitcher extends Year {
+  constructor(props, selectedDate, datePickerMain, handlerChanged) {
+    super(props);
+    this.selectedDate = selectedDate;
+    this.datePickerMain = datePickerMain;
+    this.handlerChanged = handlerChanged;
+    this.currentMonth = selectedDate.getMonth();
+    this.currentYear = selectedDate.getFullYear();
+    this.currentWeekDay = selectedDate.getDay() - 1;
+    this.firstMonthDay = new Date(this.currentYear, this.currentMonth, 1);
+    this.daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+    this.firstWeekDay = this.firstMonthDay.getDay() - 1;
+    this.allDate = {
+      selectedDate: this.selectedDate,
+      currentMonth: this.currentMonth,
+      currentYear: this.currentYear,
+      currentWeekDay: this.currentWeekDay,
+      firstMonthDay: this.firstMonthDay,
+      daysInMonth: this.daysInMonth,
+      firstWeekDay: this.firstWeekDay,
+    }
   }
 
 
@@ -224,63 +287,12 @@ class DatePickerSwitcher extends DatePickerPopup {
     datePickerSwitcher.append(this.datePickerDate, this.datePickerArrows);
 
     // Events
-    this.imgLeft.addEventListener('click', () => console.log('click left'));
-    this.imgRight.addEventListener('click', () => console.log('click right'));
-    this.spanYear.addEventListener('click', () => console.log('show more'));
-    this.imgShowMore.addEventListener('click', () => console.log('show more'));
-  }
-};
+    this.imgLeft.addEventListener('click', () => this.handlerChanged('YEAR', this.currentMonth, 'DAY', 'WEEKDAY'));
+    this.imgRight.addEventListener('click', () => this.handlerChanged('YEAR', this.currentMonth, 'DAY', 'WEEKDAY'));
+    this.spanYear.addEventListener('click', () => this.handlerChanged(this.currentYear, this.currentMonth, 'DAY', 'WEEKDAY'));
+    this.imgShowMore.addEventListener('click', () => this.handlerChanged(this.currentYear, this.currentMonth, 'DAY', 'WEEKDAY'));
 
-
-class Year extends DatePickerPopup {
-  constructor(props, datePickerMain) {
-    super(props);
-    this.date = new Date();
-    this.datePickerMain = datePickerMain;
-    this.dateMonthDay = this.date.getDate();
-    this.dateMonth = this.date.getMonth();
-    this.dateYear = this.date.getFullYear();
-    this.currentDate = new Date(this.dateYear, this.dateMonth, this.dateMonthDay);
-  }
-
-
-  handlerYearChanged(month) {
-    console.log('change month' + month)
-  }
-
-
-  render(year, month, day) {
-    if (year && month && day) {
-      this.selectedDate = new Date(year, month, day);
-    } else {
-      this.selectedDate = new Date();
-    }
-    new Month({}, this.selectedDate, this.datePickerMain, this.handlerYearChanged).render();
-  }
-
-};
-
-
-class Month extends Year {
-  constructor(props, selectedDate, datePickerMain, handlerYearChanged) {
-    super(props);
-    this.selectedDate = selectedDate;
-    this.datePickerMain = datePickerMain;
-    this.handler = handlerYearChanged;
-    this.currentMonth = selectedDate.getMonth();
-    this.currentYear = selectedDate.getFullYear();
-    this.firstMonthDay = new Date(this.currentYear, this.currentMonth, 1);
-    this.daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-    this.firstWeekDay = this.firstMonthDay.getDay() - 1;
-  }
-
-
-  handlerMonthChanged(day) {
-    console.log('change day' + day)
-  }
-
-
-  render() {
+    // CLASS MONTH
     this.datePickerDays.setAttribute('class', 'date-picker__days');
 
     for (let i = 0; i < this.firstWeekDay; i++) {
@@ -288,28 +300,21 @@ class Month extends Year {
     }
 
     for (let i = 0; i < this.daysInMonth; i++) {
-      this.datePickerDays.append(new Day({}, i + 1, this.handlerMonthChanged).render());
+      this.datePickerDays.append(new Day({}, i + 1, this.handlerChanged, this.allDate).render(this.datePickerDays));
     }
 
     this.datePickerMain.append(this.datePickerDays);
-
-    console.log(this.firstWeekDay)
   }
 };
 
 
 class Day extends Year {
-  constructor(props, day, handlerMonthChanged) {
+  constructor(props, day, handlerChanged, allDate) {
     super(props);
     this.day = day;
-    this.handler = handlerMonthChanged;
-
-    console.log(this.dateMonthDay)
-  }
-
-
-  handlerDayChanged() {
-    console.log('click day')
+    this.handlerChanged = handlerChanged;
+    this.allDate = allDate;
+    this.currentWeekDay = new Date(this.allDate?.currentYear, this.allDate?.currentMonth, this.day - 1).getDay();
   }
 
 
@@ -320,7 +325,10 @@ class Day extends Year {
     this.dateMonthDay === this.day ? this.monthDays.classList.add('day__active') : null;
 
     // Events
-    this.day ? this.monthDays.addEventListener('click', () => this.handler(this.day)) : null;
+    this.day ? this.monthDays.addEventListener('click', () => {
+      this.handlerChanged(this.allDate.currentYear, this.allDate.currentMonth, this.day, this.currentWeekDay);
+    }) : null;
+
 
     return this.monthDays;
   }

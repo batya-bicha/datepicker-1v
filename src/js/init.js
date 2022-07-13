@@ -4,22 +4,25 @@ import { DatePickerConfig } from "./datePickerConfig";
 window.addEventListener('load', () => {
   const datePickers = document.querySelectorAll('.date-picker').forEach(elem => {
     let input = elem;
+    const date = new Date();
 
     elem.addEventListener('click', (e) => { e.target.className === 'date-picker__input' || e.target.innerText === 'CANCEL' ? input.handlerToggle() : null });
     input = new DatePickerConfig({
       datePicker: elem,
       popup: 'date-picker__popup',
       format: 'DD.YYYY.MM',
-      weekDays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      weekDays: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     });
     input.render();
+    //TODO ????
+    // input.handlerChanged(date.getDay() - 1);
   });
 });
 
 
 
-
+//? отображать дату по дефоту при открытии попапа или же передавать при инициализации главного класса
 //? скрывать календраь при нажатии мимо него
 //? при нажатии на ДЕНЬ, МЕСЯЦ, ГОД - будут передваться параметры с (ГОД, МЕСЯЦ, ДЕНЬ)
 
