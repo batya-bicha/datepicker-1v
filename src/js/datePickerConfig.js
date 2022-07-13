@@ -261,7 +261,7 @@ class Year extends DatePickerPopup {
 };
 
 
-class Month extends DatePickerPopup {
+class Month extends Year {
   constructor(props, selectedDate, datePickerMain, handlerYearChanged) {
     super(props);
     this.selectedDate = selectedDate;
@@ -296,13 +296,15 @@ class Month extends DatePickerPopup {
     console.log(this.firstWeekDay)
   }
 };
-// grid-template-rows: repeat(6, 1fr);
 
-class Day extends DatePickerPopup {
+
+class Day extends Year {
   constructor(props, day, handlerMonthChanged) {
     super(props);
     this.day = day;
     this.handler = handlerMonthChanged;
+
+    console.log(this.dateMonthDay)
   }
 
 
@@ -315,6 +317,7 @@ class Day extends DatePickerPopup {
     this.monthDays = document.createElement('div');
     this.monthDays.innerText = this.day;
     this.monthDays.innerText === '' ? this.monthDays.style.cursor = 'default' : null;
+    this.dateMonthDay === this.day ? this.monthDays.classList.add('day__active') : null;
 
     // Events
     this.day ? this.monthDays.addEventListener('click', () => this.handler(this.day)) : null;
