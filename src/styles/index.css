@@ -57,3 +57,7 @@ body {
 .date-picker__img > img {
   width: 70%;
 }
+
+img {
+  user-select: none;
+}

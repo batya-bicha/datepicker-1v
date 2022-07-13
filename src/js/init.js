@@ -4,11 +4,14 @@ import { DatePickerConfig } from "./datePickerConfig";
 window.addEventListener('load', () => {
   const datePickers = document.querySelectorAll('.date-picker').forEach(elem => {
     let input = elem;
-    elem.addEventListener('click', () => { input.handlerToggle() });
+
+    elem.addEventListener('click', (e) => { e.target.className === 'date-picker__input' || e.target.innerText === 'CANCEL' ? input.handlerToggle() : null });
     input = new DatePickerConfig({
       datePicker: elem,
-      popup: '.date-picker__popup',
+      popup: 'date-picker__popup',
       format: 'DD.YYYY.MM',
+      weekDays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     });
     input.render();
   });
@@ -16,13 +19,17 @@ window.addEventListener('load', () => {
 
 
 
-// создаем класс DatePickerConfig
-// находим все инпуты
-// добавляем события на инпуты
 
-// отображаем пустые инпуты
-// принажатии рендерим попап
-// вешаем событие
+//? скрывать календраь при нажатии мимо него
+//? при нажатии на ДЕНЬ, МЕСЯЦ, ГОД - будут передваться параметры с (ГОД, МЕСЯЦ, ДЕНЬ)
+
+// создаем класс DatePickerConfig+
+// находим все инпуты+
+// добавляем события на инпуты+
+
+// отображаем пустые инпуты+
+// принажатии рендерим попап+
+// вешаем событие+
 // рендерим в попапе классы Year, Month, WeekDay, MonthDay, также рендерим Switchers
 
 // добавляем события на Year, Month, MonthDay 
@@ -32,7 +39,7 @@ window.addEventListener('load', () => {
 // при измененении даты в инпуте - менять данные календаря (Year, Month, Day)
 
 
-// сделать дефолтные значения для класса, чтобы не прописывать каждый раз
+// сделать дефолтные значения для класса, чтобы не прописывать каждый раз+
 // сделать смену формата (мб drag&drop или писать mm.dd.yyyy, yyyy.mm.dd - задать формат через точку и потом искать совпадения)
 
 
