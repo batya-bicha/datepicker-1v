@@ -65,7 +65,7 @@ export class DatePickerConfig {
     // datePickerBtns
     this.datePickerBtns = document.createElement('div');
     this.btnOk = document.createElement('button');
-    this.btnCancel = document.createElement('button');
+    this.btnCancel = document.createElement('button');  
   }
 
 
